@@ -31,17 +31,32 @@ exports.helloWorld = functions.runWith({ memory: '2GB', timeoutSeconds: 300 }).h
   // await page.setRequestInterception(true)
   // await page.goto(local_vars.app.url, { waitUntil: ['domcontentloaded', 'networkidle0'] })
   await page.goto(local_vars.app.url)
-  await page.waitForSelector('#identifiant')
-  await page.type('#identifiant', 'yolo', { delay: 50 })
-  await page.keyboard.press('Tab')
-  await page.keyboard.press('Tab')
+  await page.waitFor('#identifiant')
+  await page.type('#identifiant', local_vars.app.username)
   await page.keyboard.press('Enter')
-  const delay = ms => new Promise(res => setTimeout(res, ms))
+  await page.waitFor('#lienAccessible')
+  const link = await page.$('#lienAccessible')
+  const accessibleText = await page.evaluate(link => link.innerText, link)
 
+  if (accessibleText === 'Version accessible') {
+    await page.click('#lienAccessible')
+    await page.waitFor('#utilisation_clavier')
+    await page.evaluate(() => {
+      document.getElementById('utilisation_clavier').checked = true
+      document.querySelector('button[type="submit"]').click()
+    })
+  }
+
+  await page.waitFor('#password')
+  await page.type('#password', local_vars.app.password)
+  await page.type('#codepostal', local_vars.app.postal_code)
+  await page.keyboard.press('Enter')
+
+  const delay = ms => new Promise(res => setTimeout(res, ms))
   await delay(3000)
   await browser.close()
   response.send('function properly finished !')
-})
+})()
 
 // check interceptors
 // https errors
