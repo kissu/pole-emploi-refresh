@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
+  "plugins": [
+    "prettier"
+  ],
+  "extends": [
+    "plugin:node/recommended",
+    "plugin:promise/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "spaced-comment": 0,
+    "no-console": 1,
+    "eqeqeq": 1
+  }
+}
