@@ -1,0 +1,26 @@
+{
+  "name": "pole-emploi-refresh",
+  "version": "1.0.0",
+  "description": "Refresh your Pole Emploi application with a serverless function",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kissu/pole-emploi-refresh.git"
+  },
+  "keywords": [
+    "pole-emploi",
+    "emploi",
+    "refresh",
+    "serverless",
+    "firebase"
+  ],
+  "author": "Konstantin BIFERT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kissu/pole-emploi-refresh/issues"
+  },
+  "homepage": "https://github.com/kissu/pole-emploi-refresh#readme"
+}
