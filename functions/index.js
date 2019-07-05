@@ -32,38 +32,54 @@ exports.helloWorld = functions
       ],
     })
 
-    const page = await browser.newPage()
-    // await page.setRequestInterception(true)
-    // await page.goto(local_vars.app.url, { waitUntil: ['domcontentloaded', 'networkidle0'] })
-    await page.goto(local_vars.app.url)
-    await page.waitFor('#identifiant')
-    await page.type('#identifiant', local_vars.app.username)
-    await page.keyboard.press('Enter')
-    await page.waitFor('#lienAccessible')
-    const link = await page.$('#lienAccessible')
+    try {
+      const page = await browser.newPage()
+      // await page.setRequestInterception(true)
+      await page.goto(local_vars.app.url)
+      await page.waitFor('#identifiant')
+      await page.type('#identifiant', local_vars.app.username)
+      await page.keyboard.press('Enter')
+      await page.waitFor('#lienAccessible')
+      const link = await page.$('#lienAccessible')
 
-    const accessibleText = await page.evaluate(link => link.innerText, link)
+      const accessibleText = await page.evaluate(link => link.innerText, link)
 
-    if (accessibleText === 'Version accessible') {
-      await page.click('#lienAccessible')
-      await page.waitFor('#utilisation_clavier')
-      await page.evaluate(() => {
-        document.getElementById('utilisation_clavier').checked = true
-        document.querySelector('button[type="submit"]').click()
-      })
+      if (accessibleText === 'Version accessible') {
+        await page.click('#lienAccessible')
+        await page.waitFor('#utilisation_clavier')
+        const checkbox = await page.$('#utilisation_clavier')
+        // console.log(await (await checkbox.getProperty('checked')).jsonValue())
+        await checkbox.click()
+        await page.click('button[type="submit"]')
+      }
+
+      await page.waitFor('#password')
+      await page.type('#password', local_vars.app.password)
+      await page.type('#codepostal', local_vars.app.postal_code)
+      await page.keyboard.press('Enter')
+      await page.waitForNavigation({ waitUntil: 'networkidle2' })
+
+      if (!!(await page.$('.glz-pe-info-popup-close'))) {
+        // if ((await page.waitForSelector('.glz-pe-info-popup-closee', { timeout: 3000 })) != null) {
+        await page.click('.glz-pe-info-popup-close')
+      }
+      debugger
+
+      if (local_vars.app.local_dev === false) {
+        response.send('function properly finished !')
+      }
+    } catch (e) {
+      console.trace('error >>', e)
+      if (local_vars.app.local_dev === false) {
+        response.status(500).send('error here >>', e)
+      }
+    } finally {
+      // const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      // await delay(3000)
+      // await browser.close()
     }
+  })
 
-    await page.waitFor('#password')
-    await page.type('#password', local_vars.app.password)
-    await page.type('#codepostal', local_vars.app.postal_code)
-    await page.keyboard.press('Enter')
-
-    const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-    await delay(3000)
-    await browser.close()
-    response.send('function properly finished !')
-  })()
-
-// check interceptors
-// https errors
-// httpbin
+if (local_vars.app.local_dev === true) {
+  exports.helloWorld()
+}
